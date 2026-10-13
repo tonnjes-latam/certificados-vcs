@@ -17,8 +17,24 @@
 </style></head><body><div class="card">
 <h1>Verificación de certificados</h1>
 <p>Capacitación VCS Mobile · Tönnjes Card Latinoamérica</p>
-<p><b>Para verificar un certificado, escanee el código QR impreso en él.</b></p>
-<small>El QR abre el certificado original publicado por Tönnjes Card Latinoamérica.
-Compruebe que la dirección empiece con <b>tonnjes-latam.github.io/certificados-vcs</b>
-y que el nombre coincida con el del documento en papel.</small>
-</div></body></html>
+<p>Escriba el <b>código de verificación</b> impreso sobre el QR de su certificado.</p>
+<input id="c" placeholder="TCL-VCS-260929-001-xxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+<button id="b" onclick="ir()">Ver certificado</button>
+<div id="m" style="color:#b00000;font-size:.9rem;min-height:1.2em;margin-top:10px"></div>
+<small>También puede escanear el código QR. Compruebe que la dirección empiece con
+<b>tonnjes-latam.github.io/certificados-vcs</b> y que el nombre coincida con el del documento.</small>
+</div>
+<script>
+ var formato=/^TCL-VCS-[0-9]{6}-[0-9]{3}-[0-9a-f]{16}$/;
+ function normalizar(t){t=t.trim().split(' ').join('');var i=t.lastIndexOf('-');
+   return i<0?t.toUpperCase():t.slice(0,i).toUpperCase()+'-'+t.slice(i+1).toLowerCase();}
+ function ir(){var c=normalizar(document.getElementById('c').value),m=document.getElementById('m');
+   if(!formato.test(c)){m.textContent='El código no tiene el formato correcto. Revíselo e intente de nuevo.';return;}
+   m.style.color='#555';m.textContent='Buscando…';
+   fetch(c+'.pdf',{method:'HEAD',cache:'no-store'}).then(function(r){
+     if(r.ok){location.href=c+'.pdf';}
+     else{m.style.color='#b00000';m.textContent='No existe un certificado con ese código.';}
+   }).catch(function(){location.href=c+'.pdf';});}
+ document.getElementById('c').addEventListener('keydown',function(e){if(e.key==='Enter')ir();});
+ var q=new URLSearchParams(location.search).get('codigo');if(q){document.getElementById('c').value=q;ir();}
+</script></body></html>
